@@ -82,6 +82,7 @@
         var $element= getElement(owner);
         var $editor= getEditor(owner);
         var $options= getOptions(owner);
+        // -----------
         if($options) {
             switch(key) {
                 case 'type': {
