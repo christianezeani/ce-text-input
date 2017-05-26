@@ -1,0 +1,22 @@
+{
+  "name": "ce-textinput",
+  "homepage": "https://github.com/christianezeani/ceTextInput",
+  "authors": [
+    "Christian Ezeani <christian.ezeani@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "keywords": [
+    "input",
+    "editor",
+    "text"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
