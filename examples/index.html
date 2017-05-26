@@ -16,7 +16,10 @@
     <div class="text-editor"></div>
     <script>
         var Input= new CETextInput('.text-editor', {
-            type: 'number'
+            type: 'number',
+            onChange: function() {
+                console.info(arguments);
+            }
         });
     </script>
 </body>

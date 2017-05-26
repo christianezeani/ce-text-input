@@ -114,6 +114,8 @@
                     // 
                 } break;
             }
+            // Emit Data Input Event
+            call(owner, $options.onChange, e, owner);
         };
         // On Keypress
         $editor.onkeypress= function(e) {
@@ -198,20 +200,17 @@
         var obj= CEMap.get(this);
         return obj.$options[key];
     };
-
-    CETextInput.prototype.html= function() {
-        var args= arguments, val;
-        elements(this, function(elem) {
-            if(args.length) {
-                var value= args[0];
-                elem.innerHTML= value;
-            } else {
-                val= elem.innerHTML;
-            }
-        });
-        return val;
+    /*
+    CETextInput.prototype.text= function() {
+        var $element= getElement(this);
+        return $element.innerText;
     };
 
+    CETextInput.prototype.html= function() {
+        var $element= getElement(this);
+        return $element.innerHTML;
+    };
+    */
     CETextInput.prototype.value= function() {
         var $element= getElement(this);
         var $options= getOptions(this);
