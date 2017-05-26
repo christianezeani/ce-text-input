@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- <base href="/emplug/"> -->
+  <!--<title data-ng-bind="'CSMS | ' + $state.current.data.pageTitle"></title>-->
+  <title>Examples - ceTextInput</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <script src="../src/js/ce-textinput.js"></script>
+  <style type="text/css">
+    ce-textinput { display: block; }
+    ce-textinput > .ce-textinput-editor { padding: 5px; }
+    ce-textinput > .ce-textinput-editor:focus {
+        outline: none;
+    }
+  </style>
+</head>
+
+<body ng-controller="DemoController">
+    <div class="text-editor"></div>
+    <ce-textinput type="number" ng-model="data"></ce-textinput>
+    <button ng-click="submit(data);">Submit</button>
+    
+    <script src="js/angular.min.js"></script>
+    <script src="../src/js/angular.ce-textinput.js"></script>
+    <script>
+        var app= angular.module('app', ['CE.TextInput']);
+        app.controller('DemoController', ['$scope', function($scope) {
+            $scope.submit= function(data) {
+                console.info(data);
+            };
+        }]);
+    </script>
+</body>
+</html>

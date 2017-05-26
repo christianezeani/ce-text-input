@@ -1,0 +1,12 @@
+.ce-textinput-editor.single-line {
+    white-space: nowrap;
+    width:200px;
+    overflow: hidden;
+} 
+.ce-textinput-editor.single-line br {
+    display:none;
+}
+.ce-textinput-editor.single-line * {
+    display:inline;
+    white-space:nowrap;
+}

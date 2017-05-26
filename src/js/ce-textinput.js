@@ -24,6 +24,15 @@
         }
         return null;
     }
+
+    function numberFormat(number, separator) {
+        separator= (separator) ? separator : ',';
+        if(['string', 'number'].indexOf(typeof(number)) > 0) {
+            number= number.replace(/[^\d]+/, '');
+            return number;
+        }
+        return null;
+    }
     
     var CEMap= new Map();
 
@@ -47,6 +56,24 @@
         var obj= CEMap.get(owner)||null;
         if(obj) { return obj.$options||{}; }
         return null;
+    }
+
+    function addClass(elem, classNames) {
+        var splitExp= /\s+/g;
+        var classes= elem.className.split(splitExp).filter(function(val) { return val; });
+        classNames= classNames.split(splitExp).filter(function(val) { return val; });
+        classes= classes.concat(classNames);
+        elem.className= classes.join(' ');
+    }
+
+    function removeClass(elem, classNames) {
+        var splitExp= /\s+/g;
+        var classes= elem.className.split(splitExp).filter(function(val) { return val; });
+        classNames= classNames.split(splitExp).filter(function(val) { return val; });
+        var filtered= classes.filter(function(value) {
+            return (classNames.indexOf(value) < 0);
+        });
+        elem.className= filtered.join(' ');
     }
 
     var allowedTypes= ['text', 'number', 'email', 'html'];
@@ -86,6 +113,13 @@
                         if(typeof(value)=='object') {
                             extend($options, value);
                             extend(editorStyle, $options);
+                        }
+                    } break;
+                    case 'multiLine': {
+                        if(value) {
+                            removeClass($editor, 'single-line');
+                        } else {
+                            addClass($editor, 'single-line');
                         }
                     } break;
                 }
@@ -153,6 +187,8 @@
                 } break;
             }
         };
+        // On Initialize
+        call(owner, $options.onInit, owner);
     }
 
     window.CETextInput= function CETextInput(selector, options) {
@@ -170,6 +206,7 @@
         } else {
             var $editor= document.createElement('div');
             $editor.contentEditable= true;
+            addClass($editor, 'ce-textinput-editor');
             $element.appendChild($editor);
             $element.style.border= '1px solid #CCC';
             // ------------------
@@ -180,6 +217,7 @@
             // ------------------
             var opts= extend({
                 type: 'text',
+                multiLine: false,
                 style: {}
             }, options);
             // ------------------
