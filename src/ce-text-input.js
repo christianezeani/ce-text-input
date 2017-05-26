@@ -28,7 +28,11 @@
     function numberFormat(number, separator) {
         separator= (separator) ? separator : ',';
         if(['string', 'number'].indexOf(typeof(number)) > 0) {
-            number= number.replace(/[^\d]+/, '');
+            number= (number+'').replace(/[^\d]+/, '');
+            var formatExp= /(\d+)(\d{3})/;
+            while(formatExp.test(number)) {
+                number= number.replace(formatExp, "$1"+separator+"$2");
+            }
             return number;
         }
         return null;
@@ -151,12 +155,19 @@
         };
         // On Keypress
         $editor.onkeypress= function(e) {
-            switch($options.type) {
-                case 'number': {
-                    if(!/^\d+$/.test(e.key)) {
-                        e.preventDefault();
-                    }
-                } break;
+            var code= e.charCode||e.keyCode;
+            console.info(code);
+            if(!$options.multiLine && code==13) {
+                console.info(e.key+' Key Not Allowed!');
+                e.preventDefault();
+            } else {
+                switch($options.type) {
+                    case 'number': {
+                        if(!/^\d+$/.test(e.key)) {
+                            e.preventDefault();
+                        }
+                    } break;
+                }
             }
         };
         // On Keypress
@@ -172,16 +183,20 @@
         };
         // On Before Paste
         $editor.onpaste= function(e) {
-            var clipboardData= e.clipboardData;
-            var data= clipboardData.getData('text');
+            e.preventDefault();
+            var clipboardData= e.clipboardData||window.clipboardData;
+            var data= clipboardData.getData('text/plain');
+            console.info(data);
             switch($options.type) {
                 case 'text': {
-                    // 
+                    var data= clipboardData.getData('text/plain');
+                    if($options.multiLine) {
+                        data= data.replace(/[\r\n]+/g, "");
+                    }
+                    $editor.innerText= data;
                 } break;
                 case 'number': {
-                    if(!/^\d+$/.test(data)) {
-                        e.preventDefault();
-                    }
+                    $editor.innerText= data;
                 } break;
             }
         };
