@@ -1,22 +1,4 @@
 (function() {
-    // Get Elements
-    function getElements(selector) {
-        var $element= [];
-        if(typeof(selector)=='string') {
-            var nlist= document.querySelectorAll(selector);
-            if(nlist && nlist.length) {
-                var elems= Array.prototype.slice.call(nlist);
-                $element= $element.concat(elems);
-            }
-        } else if(selector instanceof Array) {
-            for(var i=0; i<selector.length; i++) {
-                $element= $element.concat(getElements(selector[i]));
-            }
-        } else if(selector instanceof Element) {
-            $element.push(selector);
-        }
-        return $element;
-    }
 
     function call(context, callback) {
         var args= Array.prototype.slice.call(arguments, 2);
@@ -45,108 +27,165 @@
     
     var CEMap= new Map();
 
-    function elements(owner, callback) {
+    function getElement(owner, callback) {
         var obj= CEMap.get(owner)||null;
-        if(obj) {
-            var elems= obj.$element;
-            if(elems instanceof Array) {
-                for(var i=0; i<elems.length; i++) {
-                    call(owner, callback, elems[i]);
+        if(obj && obj.$element instanceof Element) {
+            return obj.$element;
+        }
+        return null;
+    }
+
+    function getEditor(owner) {
+        var obj= CEMap.get(owner)||null;
+        if(obj && obj.$editor instanceof Element) {
+            return obj.$editor;
+        }
+        return null;
+    }
+
+    function getOptions(owner) {
+        var obj= CEMap.get(owner)||null;
+        if(obj) { return obj.$options||{}; }
+        return null;
+    }
+
+    var allowedTypes= ['text', 'number', 'email', 'html'];
+
+    function setOption(owner, key, value) {
+        var $element= getElement(owner);
+        var $editor= getEditor(owner);
+        var $options= getOptions(owner);
+        if($options) {
+            switch(key) {
+                case 'type': {
+                    value= (typeof(value)=='string') ? value.toLowerCase() : allowedTypes[0];
+                    value= (allowedTypes.indexOf(value) > 0) ? value : allowedTypes[0];
+                    $options.type= value;
+                } break;
+            }
+            // Element Options
+            if($element) {
+                var elementStyle= $element.style;
+                /*
+                switch(key) {
+                    case 'width': {
+                        if(typeof(value)=='string') {
+                            elementStyle.width= value;
+                        } else if(value===null || value===false) {
+                            $options.width= elementStyle.width= null;
+                        }
+                    } break;
+                }
+                */
+            }
+            // Editor Options
+            if($editor) {
+                var editorStyle= $editor.style;
+                switch(key) {
+                    case 'style': {
+                        if(typeof(value)=='object') {
+                            extend($options, value);
+                            extend(editorStyle, $options);
+                        }
+                    } break;
                 }
             }
         }
     }
 
-    function setOption(owner, elem, key, value) {
-        var obj= CEMap.get(owner);
-        var $options= obj.$options;
-        var style= elem.style;
-        switch(key) {
-            case 'type': {
-                value= (typeof(value)=='string') ? value.toLowerCase() : 'text';
-                value= (['text', 'html'].indexOf(value) > 0) ? value : 'text';
-                $options.type= value;
-            } break;
-            case 'width': {
-                if(typeof(value)=='string') {
-                    style.width= value;
-                } else if(value===null || value===false) {
-                    $options.width= style.width= null;
-                }
-            } break;
-            case 'minWidth': {
-                if(typeof(value)=='string') {
-                    style.minWidth= value;
-                } else if(value===null || value===false) {
-                    $options.minWidth= style.minWidth= null;
-                }
-            } break;
-            case 'maxWidth': {
-                if(typeof(value)=='string') {
-                    style.maxWidth= value;
-                } else if(value===null || value===false) {
-                    $options.maxWidth= style.maxWidth= null;
-                }
-            } break;
-            case 'height': {
-                if(typeof(value)=='string') {
-                    style.height= value;
-                } else if(value===null || value===false) {
-                    $options.height= style.height= null;
-                }
-            } break;
-            case 'minHeight': {
-                if(typeof(value)=='string') {
-                    style.minHeight= value;
-                } else if(value===null || value===false) {
-                    $options.minHeight= style.minHeight= null;
-                }
-            } break;
-            case 'maxHeight': {
-                if(typeof(value)=='string') {
-                    style.maxHeight= value;
-                } else if(value===null || value===false) {
-                    $options.maxHeight= style.maxHeight= null;
-                }
-            } break;
+    function initialize(owner) {
+        var $editor= getEditor(owner);
+        var $options= getOptions(owner);
+        // Set All Options -------
+        for(var key in $options) {
+            if($options.hasOwnProperty(key)) {
+                setOption(this, key, $options[key]);
+            }
         }
+        /* ---- EDITOR EVENTS ---- */
+        // On Input
+        $editor.oninput= function(e) {
+            // console.info([$editor]);
+            switch($options.type) {
+                case 'text': {
+                    // 
+                } break;
+                case 'number': {
+                    // 
+                } break;
+            }
+        };
+        // On Keypress
+        $editor.onkeypress= function(e) {
+            switch($options.type) {
+                case 'number': {
+                    if(!/^\d+$/.test(e.key)) {
+                        e.preventDefault();
+                    }
+                } break;
+            }
+        };
+        // On Keypress
+        $editor.onkeyup= function(e) {
+            switch($options.type) {
+                case 'text': {
+                    // 
+                } break;
+                case 'number': {
+                    // 
+                } break;
+            }
+        };
+        // On Before Paste
+        $editor.onpaste= function(e) {
+            var clipboardData= e.clipboardData;
+            var data= clipboardData.getData('text');
+            switch($options.type) {
+                case 'text': {
+                    // 
+                } break;
+                case 'number': {
+                    if(!/^\d+$/.test(data)) {
+                        e.preventDefault();
+                    }
+                } break;
+            }
+        };
     }
 
     window.CETextInput= function CETextInput(selector, options) {
-        var element= getElements(selector);
-        var obj= { $element: element };
-        // ------------------
-        var opts= extend({
-            type: 'text',
-            width: null,
-            minWidth: null,
-            maxWidth: null,
-            height: null,
-            minHeight: null,
-            maxHeight: null
-        }, options);
-        // ------------------
-        obj.$options= opts;
-        CEMap.set(this, obj);
-        // ------------------
-        elements(this, (function(elem) {
-            var style= elem.style;
-            elem.contentEditable= true;
-            style.border= '1px solid #CCC';
-            style.float= 'left';
-            for(var key in opts) {
-                if(opts.hasOwnProperty(key)) {
-                    setOption(this, elem, key, opts[key]);
-                }
-            }
-            // Events ------
-            elem.oninput= function(e) {
-                if(opts.type=='text') {
-                    console.info(e);
-                    elem.innerText= elem.innerText;
-                }
+        var $element;
+        if(typeof(selector)=='string') {
+            $element= document.querySelector(selector);
+        } else if(selector instanceof Element) {
+            $element= selector;
+        } else {
+            throw 'Invalid Selector Supplied!';
+        }
+
+        if(!$element) {
+            throw 'Element not found!';
+        } else {
+            var $editor= document.createElement('div');
+            $editor.contentEditable= true;
+            $element.appendChild($editor);
+            $element.style.border= '1px solid #CCC';
+            // ------------------
+            var obj= {
+                $element: $element,
+                $editor: $editor
             };
-        }).bind(this));
+            // ------------------
+            var opts= extend({
+                type: 'text',
+                style: {}
+            }, options);
+            // ------------------
+            obj.$options= opts;
+            CEMap.set(this, obj);
+            // Initialize -------
+            initialize(this);
+        }
     };
 
     CETextInput.prototype.set= function(key, value) {
@@ -160,6 +199,32 @@
         return obj.$options[key];
     };
 
-    var textInput= new CETextInput('ce-textinput');
-    return textInput;
+    CETextInput.prototype.html= function() {
+        var args= arguments, val;
+        elements(this, function(elem) {
+            if(args.length) {
+                var value= args[0];
+                elem.innerHTML= value;
+            } else {
+                val= elem.innerHTML;
+            }
+        });
+        return val;
+    };
+
+    CETextInput.prototype.value= function() {
+        var $element= getElement(this);
+        var $options= getOptions(this);
+        var value= null;
+        switch($options.type) {
+            case 'html': {
+                value= $element.innerHTML;
+            } break;
+            default: {
+                value= $element.innerText;
+            } break;
+        }
+        return value;
+    };
+
 })();
