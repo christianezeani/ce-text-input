@@ -89,6 +89,10 @@
                     value= (allowedTypes.indexOf(value) > 0) ? value : allowedTypes[0];
                     $options.type= value;
                 } break;
+                case 'multiLine': {
+                    value= ([false,true].indexOf(value) > 0) ? value : false;
+                    $options.multiLine= value;
+                } break;
             }
             // Element Options
             if($element) {
@@ -113,13 +117,6 @@
                         if(typeof(value)=='object') {
                             extend($options, value);
                             extend(editorStyle, $options);
-                        }
-                    } break;
-                    case 'multiLine': {
-                        if(value) {
-                            removeClass($editor, 'single-line');
-                        } else {
-                            addClass($editor, 'single-line');
                         }
                     } break;
                 }
