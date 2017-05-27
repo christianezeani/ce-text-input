@@ -204,7 +204,7 @@
         } else {
             var $editor= document.createElement('div');
             $editor.contentEditable= true;
-            addClass($editor, 'ce-textinput-editor');
+            addClass($editor, 'ce-text-input-editor');
             $element.appendChild($editor);
             $element.style.border= '1px solid #CCC';
             // ------------------
