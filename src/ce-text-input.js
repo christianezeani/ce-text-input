@@ -1,4 +1,5 @@
 (function() {
+    var CEMap= new Map();
 
     function call(context, callback) {
         var args= Array.prototype.slice.call(arguments, 2);
@@ -38,29 +39,6 @@
         return null;
     }
     
-    var CEMap= new Map();
-
-    function getElement(owner, callback) {
-        var obj= CEMap.get(owner)||null;
-        if(obj && obj.$element instanceof Element) {
-            return obj.$element;
-        }
-        return null;
-    }
-
-    function getEditor(owner) {
-        var obj= CEMap.get(owner)||null;
-        if(obj && obj.$editor instanceof Element) {
-            return obj.$editor;
-        }
-        return null;
-    }
-
-    function getOptions(owner) {
-        var obj= CEMap.get(owner)||null;
-        if(obj) { return obj.$options||{}; }
-        return null;
-    }
 
     function addClass(elem, classNames) {
         var splitExp= /\s+/g;
@@ -83,9 +61,9 @@
     var allowedTypes= ['text', 'number', 'email', 'html'];
 
     function setOption(owner, key, value) {
-        var $element= getElement(owner);
-        var $editor= getEditor(owner);
-        var $options= getOptions(owner);
+        var $element= owner.$element;
+        var $editor= owner.$editor;
+        var $options= owner.$options;
         // -----------
         if($options) {
             switch(key) {
@@ -130,12 +108,12 @@
     }
 
     function initialize(owner) {
-        var $editor= getEditor(owner);
-        var $options= getOptions(owner);
+        var $editor= owner.$editor;
+        var $options= owner.$options;
         // Set All Options -------
         for(var key in $options) {
             if($options.hasOwnProperty(key)) {
-                setOption(this, key, $options[key]);
+                setOption(owner, key, $options[key]);
             }
         }
         /* ---- EDITOR EVENTS ---- */
@@ -241,40 +219,53 @@
         }
     };
 
+    Object.defineProperty(CETextInput.prototype, '$element', {
+        get: function() {
+            var obj= CEMap.get(this)||null;
+            if(obj) { return obj.$element; }
+            return null;
+        }
+    });
+
+    Object.defineProperty(CETextInput.prototype, '$editor', {
+        get: function() {
+            var obj= CEMap.get(this)||null;
+            if(obj) { return obj.$editor; }
+            return null;
+        }
+    });
+
+    Object.defineProperty(CETextInput.prototype, '$options', {
+        get: function() {
+            var obj= CEMap.get(this)||null;
+            if(obj) { return obj.$options; }
+            return null;
+        }
+    });
+
     CETextInput.prototype.set= function(key, value) {
-        elements(this, (function(elem) {
-            setOption(this, elem, key, value);
-        }).bind(this));
+        setOption(this, key, value);
     };
 
     CETextInput.prototype.get= function(key) {
-        var obj= CEMap.get(this);
-        return obj.$options[key];
+        return this.$options[key]||null;
     };
-    /*
-    CETextInput.prototype.text= function() {
-        var $element= getElement(this);
-        return $element.innerText;
-    };
-
-    CETextInput.prototype.html= function() {
-        var $element= getElement(this);
-        return $element.innerHTML;
-    };
-    */
-    CETextInput.prototype.value= function() {
-        var $element= getElement(this);
-        var $options= getOptions(this);
-        var value= null;
-        switch($options.type) {
-            case 'html': {
-                value= $element.innerHTML;
-            } break;
-            default: {
-                value= $element.innerText;
-            } break;
+    
+    Object.defineProperty(CETextInput.prototype, 'value', {
+        get: function() {
+            var $element= this.$element;
+            var $options= this.$options;
+            var value= null;
+            switch($options.type) {
+                case 'html': {
+                    value= $element.innerHTML;
+                } break;
+                default: {
+                    value= $element.innerText;
+                } break;
+            }
+            return value;
         }
-        return value;
-    };
+    });
 
 })();

@@ -10,13 +10,11 @@ window.angular&&(function() {
                     scope.$editor= new CETextInput(element[0], {
                         type: scope.type,
                         onInit: function(editor) {
-                            var value= editor.value();
-                            scope.ngModel= value;
+                            scope.ngModel= editor.value;
                         },
                         onChange: function(e, editor) {
-                            var value= editor.value();
                             scope.$apply(function() {
-                                scope.ngModel= value;
+                                scope.ngModel= editor.value;
                             });
                         }
                     });
