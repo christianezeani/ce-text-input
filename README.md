@@ -1,1 +1,1 @@
-# ceTextInput
+# ce-text-input
