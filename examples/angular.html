@@ -9,9 +9,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <script src="../src/ce-text-input.js"></script>
   <style type="text/css">
-    ce-textinput { display: block; }
-    ce-textinput > .ce-textinput-editor { padding: 5px; }
-    ce-textinput > .ce-textinput-editor:focus {
+    ce-text-input { display: block; }
+    ce-text-input > .ce-text-input-editor { padding: 5px; }
+    ce-text-input > .ce-text-input-editor:focus {
         outline: none;
     }
   </style>
@@ -19,7 +19,7 @@
 
 <body ng-controller="DemoController">
     <div class="text-editor"></div>
-    <ce-textinput type="number" ng-model="data"></ce-textinput>
+    <ce-text-input type="number" ng-model="data"></ce-text-input>
     <button ng-click="submit(data);">Submit</button>
     
     <script src="js/angular.min.js"></script>

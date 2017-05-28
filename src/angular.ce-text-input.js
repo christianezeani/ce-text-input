@@ -1,7 +1,7 @@
 window.angular&&(function() {
     var module= angular.module('CE.TextInput', []);
 
-    module.directive('ceTextinput', [function() {
+    module.directive('ceTextInput', [function() {
         return {
             restrict: 'E',
             scope: { type: '=', ngModel: '=' },
