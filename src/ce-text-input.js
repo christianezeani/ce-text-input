@@ -221,7 +221,7 @@
             $editor.contentEditable= true;
             addClass($editor, 'ce-text-input-editor');
             $element.appendChild($editor);
-            $element.style.border= '1px solid #CCC';
+            // $element.style.border= '1px solid #CCC';
             // ------------------
             var obj= {
                 $element: $element,
