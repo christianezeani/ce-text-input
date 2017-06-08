@@ -137,17 +137,22 @@
             var proceed= call(owner, $options.onKeyPress, e, owner);
             if(proceed !== false) {
                 var code= e.charCode||e.keyCode;
-                if(!$options.multiLine && code==13) {
-                    console.info(e.key+' Key Not Allowed!');
-                    e.preventDefault();
-                } else {
-                    switch($options.type) {
-                        case 'number': {
-                            if(!/^\d+$/.test(e.key)) {
-                                e.preventDefault();
-                            }
-                        } break;
-                    }
+                switch(code) {
+                    case 13: {
+                        proceed= call(owner, $options.onEnterKey, e, owner);
+                        if(proceed === false || !$options.multiLine) {
+                            e.preventDefault();
+                        }
+                    } break;
+                    default: {
+                        switch($options.type) {
+                            case 'number': {
+                                if(!/^\d+$/.test(e.key)) {
+                                    e.preventDefault();
+                                }
+                            } break;
+                        }
+                    } break;
                 }
             }
         };
